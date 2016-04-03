@@ -3,6 +3,7 @@
 from PyQt4 import QtCore
 from PyQt4.QtGui import *
 import sys
+import glob
 
 
 class MainWindow(QWidget):
@@ -28,9 +29,28 @@ class MainWindow(QWidget):
         gridLayout.addWidget(self.destEdit,  2,  1)
         
         self.commitButton = QPushButton("OK")
+        QtCore.QObject.connect(self.commitButton,\
+            QtCore.SIGNAL("clicked()"),\
+            self.textProcess)
         gridLayout.addWidget(self.commitButton,  3,  0)
         
         self.setLayout(gridLayout)
+    
+    def textProcess(self):
+        fn = self.filenameEdit.text()
+        src = self.srcEdit.text()
+        dest = self.destEdit.text()
+        
+        gl = glob.glob(fn);
+
+        for i in gl:
+            file = open(i, "r")
+            st = file.read()
+            file.close()
+            st = st.replace(src,  dest)
+            file = open(i, "w")
+            file.write(st)
+            file.close()
 
 
 app = QApplication(sys.argv)
